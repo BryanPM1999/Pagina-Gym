@@ -26,6 +26,21 @@
             // 5. Abrir en una nueva pestaña
             window.open(urlWhatsapp, '_blank');
         });
+
+        const btnContactoGeneral = document.getElementById('btn-contacto-general');
+
+        if (btnContactoGeneral) {
+        btnContactoGeneral.addEventListener('click', () => {
+            // Mensaje diferente para contacto general
+            const mensaje = "Hola IronFit, tengo una consulta general sobre sus productos.";
+            const mensajeCodificado = encodeURIComponent(mensaje);
+            
+            // Reutilizamos la constante TELEFONO_NEGOCIO
+            const urlWhatsapp = `https://wa.me/${TELEFONO_NEGOCIO}?text=${mensajeCodificado}`;
+            
+            window.open(urlWhatsapp, '_blank');
+        });
+        }
     });
 
     // --- AÑO AUTOMÁTICO (Mantenemos esto del código anterior) ---
