@@ -27,10 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 response.items.forEach(item => {
                     const fields = item.fields;
 
-                    // Extraemos la URL de la imagen (con seguridad por si no hay imagen)
-                    let imagenUrl = 'img/placeholder.jpg'; // Imagen por defecto
-                    if(fields.imagen && fields.imagen.fields) {
-                        imagenUrl = fields.imagen.fields.file.url;
+                    // Extraemos la URL de la imagen (con seguridad por si no hay imagen)--
+                    let imagenSrc = 'https://via.placeholder.com/300'; // Imagen gris por defecto si falla
+
+                    if(fields.imagen && fields.imagen.fields && fields.imagen.fields.file) {
+                        // Contentful nos da la url sin 'https:', se lo agregamos aquí
+                        imagenSrc = 'https:' + fields.imagen.fields.file.url;
                     }
 
                     // Creamos la tarjeta HTML
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     card.innerHTML = `
                         <figure class="product-image-container">
-                            <img src="https:${imagenUrl}" alt="${fields.nombre}" loading="lazy">
+                            <img src="${imagenSrc}" alt="${fields.nombre}" loading="lazy">
                         </figure>
                         <div class="product-info">
                             <span class="category-tag">${fields.categoria}</span>
