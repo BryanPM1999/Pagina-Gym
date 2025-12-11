@@ -6,7 +6,8 @@
     <meta name="description" content="IronFit - Tienda especializada en suplementos y ropa deportiva de alta calidad.">
     <title>IronFit | Tu Tienda de Gimnasio</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+    <script src="js/script.js" defer></script>
 </head>
 <body>
 
@@ -34,61 +35,8 @@
 
         <section id="productos" class="products-section container">
             <h2 class="section-title">Nuestros <span>Destacados</span></h2>
-            
-            <div class="grid-products">
-                <article class="product-card">
-                    <figure class="product-image-container">
-                        <img src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=1470" alt="Bote de Proteína Whey marca IronFit" loading="lazy">
-                    </figure>
-                    <div class="product-info">
-                        <span class="category-tag">Suplementos</span>
-                        <h3>Ultra Whey Protein</h3>
-                        <p class="price">$59.99</p>
-                        
-                        <a href="#"
-                            class="btn btn-whatsapp"
-                            data-name="Ultra Whey Protein"
-                            data-price="$59.99">
-                            Comprar por WhatsApp
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card">
-                    <figure class="product-image-container">
-                        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1470" alt="Set de mancuernas negras" loading="lazy">
-                    </figure>
-                    <div class="product-info">
-                        <span class="category-tag">Equipo</span>
-                        <h3>Set Mancuernas 20kg</h3>
-                        <p class="price">$89.99</p>
-                        
-                        <a href="#"
-                            class="btn btn-whatsapp"
-                            data-name="Set Mancuernas 20kg"
-                            data-price="$89.99">
-                            Comprar por WhatsApp
-                        </a>
-                    </div>
-                </article>
-
-                <article class="product-card">
-                    <figure class="product-image-container">
-                        <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=1374" alt="Zapatillas deportivas para gimnasio" loading="lazy">
-                    </figure>
-                    <div class="product-info">
-                        <span class="category-tag">Ropa</span>
-                        <h3>Zapatillas Pro</h3>
-                        <p class="price">$120.00</p>
-
-                        <a href="#"
-                            class="btn btn-whatsapp"
-                            data-name="Zapatillas Pro"
-                            data-price="$120.00">
-                            Comprar por WhatsApp
-                        </a>
-                    </div>
-                </article>
+            <div class="grid-products" id="contenedor-productos">
+                <p class="loading-msg">Cargando catálogo...</p>
             </div>
         </section>
     </main>

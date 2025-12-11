@@ -1,52 +1,90 @@
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-    // --- CONFIGURACIÓN WHATSAPP---
-    const TELEFONO_NEGOCIO = "50370980487"; 
+    // --- 1. CONFIGURACIÓN ---
+    const TELEFONO_NEGOCIO = "50377777777"; 
+    
+    // PEGA AQUÍ TUS LLAVES DE CONTENTFUL (Paso 2)
+    const SPACE_ID = '0p51a415zjg9';
+    const ACCESS_TOKEN = '8YZnNa42-Lq_QotpjEVlWeH4g4P747iNB2p6u-20bHU';
 
-    // --- LÓGICA DE WHATSAPP ---
-    const botonesWhatsapp = document.querySelectorAll('.btn-whatsapp');
+    const contenedor = document.getElementById('contenedor-productos');
 
-    botonesWhatsapp.forEach(boton => {
-        boton.addEventListener('click', (e) => {
-            e.preventDefault(); 
-
-            // 1. Obtener datos del producto 
-            const producto = boton.getAttribute('data-name');
-            const precio = boton.getAttribute('data-price');
-
-            // 2. Construir el mensaje
-            const mensaje = `Hola IronFit, me interesa comprar: ${producto} - Precio: ${precio}. ¿Está disponible?`;
-
-            // 3. Codificar el mensaje para URL 
-            const mensajeCodificado = encodeURIComponent(mensaje);
-
-            // 4. Crear la URL final
-            const urlWhatsapp = `https://wa.me/${TELEFONO_NEGOCIO}?text=${mensajeCodificado}`;
-
-            // 5. Abrir en una nueva pestaña
-            window.open(urlWhatsapp, '_blank');
-        });
-
-        const btnContactoGeneral = document.getElementById('btn-contacto-general');
-
-        if (btnContactoGeneral) {
-        btnContactoGeneral.addEventListener('click', () => {
-            // Mensaje diferente para contacto general
-            const mensaje = "Hola IronFit, tengo una consulta general sobre sus productos.";
-            const mensajeCodificado = encodeURIComponent(mensaje);
-            
-            // Reutilizamos la constante TELEFONO_NEGOCIO
-            const urlWhatsapp = `https://wa.me/${TELEFONO_NEGOCIO}?text=${mensajeCodificado}`;
-            
-            window.open(urlWhatsapp, '_blank');
-        });
-        }
+    // --- 2. CONEXIÓN CON CONTENTFUL ---
+    const client = contentful.createClient({
+        space: SPACE_ID,
+        accessToken: ACCESS_TOKEN
     });
 
-    // --- AÑO AUTOMÁTICO (Mantenemos esto del código anterior) ---
-    const elementoAnio = document.querySelector('.copyright p');
-    if(elementoAnio) {
-        const anioActual = new Date().getFullYear();
-        elementoAnio.innerHTML = `&copy; ${anioActual} IronFit Store. Todos los derechos reservados.`;
+    // --- 3. FUNCIÓN PARA TRAER DATOS Y PINTARLOS ---
+    function cargarProductos() {
+        // Pedimos los productos ('entries') del tipo 'producto'
+        client.getEntries({ content_type: 'producto' })
+            .then((response) => {
+                // Limpiamos el mensaje de "Cargando..."
+                contenedor.innerHTML = '';
+
+                // Recorremos cada producto que llegó de la nube
+                response.items.forEach(item => {
+                    const fields = item.fields;
+
+                    // Extraemos la URL de la imagen (con seguridad por si no hay imagen)
+                    let imagenUrl = 'img/placeholder.jpg'; // Imagen por defecto
+                    if(fields.imagen && fields.imagen.fields) {
+                        imagenUrl = fields.imagen.fields.file.url;
+                    }
+
+                    // Creamos la tarjeta HTML
+                    const card = document.createElement('article');
+                    card.classList.add('product-card');
+
+                    card.innerHTML = `
+                        <figure class="product-image-container">
+                            <img src="https:${imagenUrl}" alt="${fields.nombre}" loading="lazy">
+                        </figure>
+                        <div class="product-info">
+                            <span class="category-tag">${fields.categoria}</span>
+                            <h3>${fields.nombre}</h3>
+                            <p class="price">${fields.precio}</p>
+                            <button 
+                                class="btn btn-whatsapp" 
+                                data-name="${fields.nombre}" 
+                                data-price="${fields.precio}">
+                                Pedir en WhatsApp
+                            </button>
+                        </div>
+                    `;
+                    contenedor.appendChild(card);
+                });
+
+                // Reactivamos los botones de WhatsApp para los nuevos elementos
+                activarBotonesWhatsapp();
+            })
+            .catch((error) => {
+                console.error("Error cargando productos:", error);
+                contenedor.innerHTML = '<p>Hubo un error cargando el catálogo. Intenta recargar.</p>';
+            });
     }
+
+    // --- 4. LÓGICA DE WHATSAPP ---
+    function activarBotonesWhatsapp() {
+        const botones = document.querySelectorAll('.btn-whatsapp');
+        botones.forEach(boton => {
+            boton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const nombre = boton.getAttribute('data-name');
+                const precio = boton.getAttribute('data-price');
+                const mensaje = `Hola IronFit, me interesa: ${nombre} (${precio}). ¿Está disponible?`;
+                const url = `https://wa.me/${TELEFONO_NEGOCIO}?text=${encodeURIComponent(mensaje)}`;
+                window.open(url, '_blank');
+            });
+        });
+    }
+
+    // --- 5. INICIALIZACIÓN ---
+    // Cargamos los productos al iniciar
+    cargarProductos();
+
+    // Footer automático
+    const anio = document.querySelector('.copyright p');
+    if(anio) anio.innerHTML = `&copy; ${new Date().getFullYear()} IronFit Store.`;
 });
